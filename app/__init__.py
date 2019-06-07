@@ -29,5 +29,9 @@ from app.schools.views import schools
 
 app.register_blueprint(schools, url_prefix='/v1')
 
+from app.courses.views import courses
+
+app.register_blueprint(courses, url_prefix='/v1')
+
 # Import the application views
 from app import views

@@ -1,4 +1,6 @@
-from neomodel import StructuredNode, StringProperty, UniqueIdProperty
+from neomodel import (StructuredNode, StringProperty,
+                      UniqueIdProperty, RelationshipFrom, ZeroOrMore)
+from app.models.relationships.base_rel import BaseRel
 
 
 class School(StructuredNode):
@@ -7,16 +9,18 @@ class School(StructuredNode):
     """
     uuid = UniqueIdProperty()
     name = StringProperty()
+    courses = RelationshipFrom(
+        'app.models.course.Course', 'TAUGHT_AT', cardinality=ZeroOrMore, model=BaseRel)
 
     def update(self, name, rel):
-            """
-            Function will update the name of the school
-            :param name: the name of the school
-            """
+        """
+        Function will update the name of the school
+        :param name: the name of the school
+        """
 
-            self.name = name if name is not None else self.name
-            rel.updated_on = datetime.datetime.now()
-            self.save()
+        self.name = name if name is not None else self.name
+        rel.updated_on = datetime.datetime.now()
+        self.save()
 
     def json(self):
         """
