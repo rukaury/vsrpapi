@@ -1,3 +1,5 @@
+'''
+
 from app.models.neomodels import Quiz, Question
 
 
@@ -10,3 +12,5 @@ def create_question(title, text, is_multi, quiz_id):
                             is_multiple_choice=is_multi)
     new_question.save()
     new_question.asked_by.connect(quiz)
+
+'''
