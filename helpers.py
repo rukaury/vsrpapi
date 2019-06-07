@@ -1,3 +1,5 @@
+
+'''
 from neomodels import (Program, School, User, Course,
                        Room, Quiz, Question, Answer)
 
@@ -21,3 +23,5 @@ def create_answer(text, is_correct_answer, question_id):
     new_answer = Answer(text=text, correct=is_correct_answer)
     new_answer.save()
     new_answer.answer_for.connect(question)
+
+'''

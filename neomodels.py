@@ -1,3 +1,5 @@
+'''
+
 from neomodel import config
 
 
@@ -49,3 +51,5 @@ if __name__ == "__main__":
             incorrect.save()
             incorrect.answer_for.connect(question)
         question.asked_by.connect(quiz)
+
+'''

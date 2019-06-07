@@ -1,27 +1,18 @@
-from app import app, db
+from neomodel import (StructuredNode, StringProperty, DateTimeProperty)
+from neomodel.exceptions import DoesNotExist
 import datetime
 
-class BlackListToken(db.Model):
-    """
-    Table to store blacklisted/invalid auth tokens
-    """
-    __tablename__ = 'blacklist_token'
+class BlackListToken(StructuredNode):
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    token = db.Column(db.String(255), unique=True, nullable=False)
-    blacklisted_on = db.Column(db.DateTime, nullable=False)
-
-    def __init__(self, token):
-        self.token = token
-        self.blacklisted_on = datetime.datetime.now()
+    token = StringProperty(unique_index=True, unique=True)
+    blacklisted_on = DateTimeProperty(default_now=True)
 
     def blacklist(self):
         """
         Persist Blacklisted token in the database
         :return:
         """
-        db.session.add(self)
-        db.session.commit()
+        self.save()
 
     @staticmethod
     def check_blacklist(token):
@@ -30,7 +21,8 @@ class BlackListToken(db.Model):
         :param token: Authorization token
         :return:
         """
-        response = BlackListToken.query.filter_by(token=token).first()
-        if response:
-            return True
-        return False
+        try:
+            response = BlackListToken.nodes.get(token=token)
+            return True 
+        except:
+            return False

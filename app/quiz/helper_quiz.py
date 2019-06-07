@@ -1,3 +1,5 @@
+'''
+
 from app.models.neomodels import Quiz, Room
 
 
@@ -16,3 +18,4 @@ def get_quiz(quiz_id):
     if room is None:
         raise ValueError("Quiz with id " + quiz_id + " cannot be found")
     return room
+'''

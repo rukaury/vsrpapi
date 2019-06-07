@@ -43,37 +43,6 @@ def test():
         return 0
     return 1
 
-
-@manager.command
-def dummy():
-    # Create a user if they do not exist.
-    user = User.query.filter_by(email="example@test.com").first()
-    if not user:
-        user = User("example@test.com", "123456")
-        user.save()
-
-    for i in range(100):
-        # Add events to the database
-        event = Event(faker.lorem_ipsum.title(words_quantity=10), faker.name.location(), faker.date.date(), user.id)
-        event.save()
-
-    for j in range(500):
-        # Add guests to the database
-        guest = Guest(faker.name.first_name(), faker.name.last_name(), faker.name.company_name(), faker.email.address(user=None), user.id)
-        guest.save()
-
-    for ev in range(1000):
-        # Add tickets to the event
-        event = Event.query.filter_by(event_id=randint(1, Event.query.count() - 1)).first()
-        guest = Guest.query.filter_by(guest_id=randint(1, Guest.query.count() - 1)).first()
-        ticket = Ticket(event.event_id, guest.guest_id, faker.lorem_ipsum.words(quantity=15, as_list=False), faker.basic.number(at_least=0, at_most=1), faker.basic.number(at_least=0, at_most=1), faker.basic.number(at_least=0, at_most=1000))
-        db.session.add(ticket)
-        try:
-            db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
-
-
 # Run the manager
 if __name__ == '__main__':
     manager.run()

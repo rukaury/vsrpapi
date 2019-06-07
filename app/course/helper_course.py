@@ -1,3 +1,5 @@
+'''
+
 def create_course(code, school_id):
     school = School.nodes.get_or_none(uuid=school_id)
     if school is None:
@@ -7,3 +9,5 @@ def create_course(code, school_id):
     new_course.save()
 
     new_course.taught_at.connect(school)
+
+'''

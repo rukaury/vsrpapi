@@ -1,3 +1,5 @@
+'''
+
 from app.models.room import
 
 
@@ -19,3 +21,6 @@ def get_room(room_id):
     if room is None:
         raise ValueError("Room with id " + room_id + " cannot be found")
     return room
+
+
+'''
