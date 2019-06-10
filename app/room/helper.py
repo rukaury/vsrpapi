@@ -74,7 +74,7 @@ def response_for_single_room(room):
     """
     return make_response(jsonify({
         'status': 'success',
-        'room': room
+        'room': room.json()
     }))
 
 

@@ -1,4 +1,4 @@
-from app.room.helper import response, get_course_from_user, create_and_save_room, response_for_created_room, check_user_is_room_admin, get_single_room
+from app.room.helper import response, get_course_from_user, create_and_save_room, response_for_created_room, check_user_is_room_admin, get_single_room, get_all_rooms, response_for_rooms_list, response_for_rooms_quizzes, response_for_single_room
 from flask import Blueprint, request, abort
 from app.auth.helper import token_required
 
@@ -45,14 +45,14 @@ def view_single_room(current_user, room_id):
     return response_for_single_room(room)
 
 
-@rooms.route('/rooms/', methods=['GET'])
+@rooms.route('/rooms', methods=['GET'])
 @token_required
 def view_all_rooms(current_user):
     rooms_json = get_all_rooms(current_user)
     return response_for_rooms_list(rooms_json)
 
 
-@rooms.route('/rooms/<room_id>/quizzes/', methods=['GET'])
+@rooms.route('/rooms/<room_id>/quizzes', methods=['GET'])
 @token_required
 def view_rooms_quizzes(current_user, room_id):
     """
