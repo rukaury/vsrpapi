@@ -1,6 +1,6 @@
 from app import app, bcrypt
 from .blacklist_token import BlackListToken
-from neomodel import (StructuredNode, StringProperty, DateTimeProperty, RelationshipTo, One, DoesNotExist)
+from neomodel import (StructuredNode, StringProperty, DateTimeProperty, RelationshipTo, One, DoesNotExist, ZeroOrMore)
 from app.models.relationships.base_rel import BaseRel
 import datetime
 import jwt
@@ -21,6 +21,8 @@ class User(StructuredNode):
     program = RelationshipTo('app.models.program.Program', 'TAKES', cardinality=One, model=BaseRel)
     # traverse outgoing ATTENDS relationship, inflate School that user goes to
     school = RelationshipTo('app.models.school.School', 'ATTENDS', cardinality=One, model=BaseRel)
+    # traverse outgoing PARTICIPATES_IN relationship, inflate room that user participates to
+    rooms = RelationshipTo('app.models.room.Room', 'PARTICIPATES_IN', cardinality=ZeroOrMore, model=BaseRel)
 
     def save_user(self):
         """

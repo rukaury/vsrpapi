@@ -2,7 +2,7 @@ from app.models.room import Room
 from flask import make_response, jsonify
 
 
-def create_and_save_room(name, active, admin_id, course_id):
+def create_and_save_room(name, active, user, course):
     '''
     Helper to create a room and save it to the graph
     :param name: the name of the room
@@ -11,61 +11,62 @@ def create_and_save_room(name, active, admin_id, course_id):
     :param course_id: the course code / id representing the course that this room studies
     :return ValueError: raised if either the course or user cannot be found in the graph
     '''
-    course_it_studies = Course.nodes.get_or_none(uuid=course_id)
-    admin = User.nodes.get_or_none(uuid=admin_id)
-    if course_it_studies or admin is None:
-        raise ValueError("Course or User Does Not Exist!")
-        return
     new_room = Room(name=name, active=active)
     new_room.save()
-    new_room.admin.connect(admin)
-    new_room.participant.connect(admin)
-    new_room.studies.connect(course_it_studies)
+    new_room.admin.connect(user)
+    user.rooms.connect(new_room)
+    new_room.course.connect(course)
+    return new_room
 
 
-def get_room_by_id(room_id):
-    '''
-    Helper to retrieve a room from the graph using a room id
-    :param room_id: the id matching the uuid of the room in the graph
-    :return room: the room (formatted to json) matching the room_id
-    :return ValueError: if the room id cannot be found raises this error
-    '''
-    room = Room.nodes.get_or_none(uuid=room_id)
-    if room is None:
-        raise ValueError("Room with id " + room_id + " cannot be found")
-    return room.json()
+def get_course_from_user(user, course_code):
+    return user.school.get().courses.get_or_none(code=course_code)
 
 
-def get_all_rooms():
-    '''
-    Helper function to return a list of all rooms in the graph
-    :return room_array: an array of all rooms (formatted to json) in the graph, empty if none exist
-    '''
-    rooms = Room.nodes.all()
-    room_array = []
-    for room in rooms:
-        room_array.append({"room": room.json()})
-    return room_array
-
-
-def response_single_room(room_id):
+def response_for_single_room(room):
     """
-    Function to create a flask response when requesting a single room
-    :param room_id: the room to get from the graph
-    :returns make_response with json representation of a room
+    Return the response for when a single room was requested by the user.
+    :param program:
+    :return:
     """
-    room = {}
-    try:
-        room = get_room_by_id(room_id)
-    except ValueError:
-        #The room does not exist  - Error
-        return make_response(jsonify(room), 404)
-    return make_response(jsonify(room))
+    return make_response(jsonify({
+        'status': 'success',
+        'room': room
+    }))
 
-
-def response_all_rooms():
-        """
-    Function to create a flask response when requesting all rooms
-    :returns make_response with json representation of an array of rooms
+def response(status, message, code):
     """
-    return make_response(jsonify(get_all_rooms()))
+    Helper method to make a http response
+    :param status: Status message
+    :param message: Response message
+    :param code: Response status code
+    :return: Http Response
+    """
+    return make_response(jsonify({
+        'status': status,
+        'message': message
+    })), code
+
+def response_for_rooms_list(all_rooms):
+    """
+    Return the response when all rooms are requested.
+    :param all_rooms:
+    :return:
+    """
+    return make_response(jsonify({
+        'status': 'success',
+        'rooms': all_rooms
+    }))
+
+def response_for_created_room(room, status_code):
+    """
+    Method returning the response when an room has been successfully created.
+    :param status_code:
+    :param room: room
+    :return: Http Response
+    """
+    return make_response(jsonify({'room' : {
+        'room_id': room.uuid,
+        'room_name': room.name,
+        'room_course': room.course.get().code
+    }, 'status': 'success'})), status_code
