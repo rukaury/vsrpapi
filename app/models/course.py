@@ -5,7 +5,7 @@ class Course(StructuredNode):
     """
     Class to represent the Course node
     """
-    code = StringProperty(unique_index=True)
+    code = StringProperty(unique=True, unique_index=True)
 
     # traverse outgoing TAUGHT_AT relationship, inflate School the course is taught at
     school = RelationshipTo("app.models.school.School", 'TAUGHT_AT', cardinality=One, model=BaseRel)

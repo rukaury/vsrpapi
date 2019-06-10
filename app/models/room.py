@@ -1,5 +1,6 @@
 from neomodel import (StructuredNode, UniqueIdProperty, StringProperty, BooleanProperty, RelationshipTo, RelationshipFrom, One, ZeroOrMore)
 from app.models.relationships.base_rel import BaseRel
+import datetime
 
 class Room(StructuredNode):
     """
@@ -15,6 +16,19 @@ class Room(StructuredNode):
     admin = RelationshipTo("app.models.user.User", 'CREATED_BY', cardinality=One, model=BaseRel)
     # traverse the PRACTICES relations, inflate the class it studies
     course = RelationshipTo("app.models.course.Course", 'PRACTICES', cardinality=One, model=BaseRel)
+
+    def update(self, name, course, rel):
+        """
+        Function will update the course
+        :param code: the new course code
+        """
+
+        self.name = name if name is not None else self.name
+        
+        if course:
+            self.course.reconnect(self.course.get(), course)
+        rel.updated_on = datetime.datetime.now()
+        self.save()
 
     def json(self):
         """

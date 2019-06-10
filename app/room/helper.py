@@ -19,8 +19,30 @@ def create_and_save_room(name, active, user, course):
     return new_room
 
 
-def get_course_from_user(user, course_code):
-    return user.school.get().courses.get_or_none(code=course_code)
+def get_course_from_user(current_user, course_code):
+    '''
+   Helper to retrieve a course from a user
+   :param current_user: the current user
+   :param course_code: the code matching the code of the course in the graph
+   :return course: the course matching the course_code
+   '''
+    return current_user.school.get().courses.get_or_none(code=course_code)
+
+def get_single_room(current_user, room_id):
+   '''
+   Helper to retrieve a room from the graph using a room id
+   :param room_id: the id matching the uuid of the room in the graph
+   :return room: the room matching the room_id
+   '''
+   return current_user.rooms.get_or_none(uuid=room_id)
+
+def check_user_is_room_admin(current_user, room_id):
+    '''
+   Helper to check if a room admin is the current user
+   :param room_id: the id matching the uuid of the room in the graph
+   :return bool: Boolean
+   '''
+    return Room.nodes.get_or_none(uuid=room_id).admin.get().username == current_user.username
 
 
 def response_for_single_room(room):
@@ -70,3 +92,5 @@ def response_for_created_room(room, status_code):
         'room_name': room.name,
         'room_course': room.course.get().code
     }, 'status': 'success'})), status_code
+
+
