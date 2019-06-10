@@ -15,6 +15,8 @@ class Room(StructuredNode):
     admin = RelationshipTo("app.models.user.User", 'CREATED_BY', cardinality=One, model=BaseRel)
     # traverse the PRACTICES relations, inflate the class it studies
     course = RelationshipTo("app.models.course.Course", 'PRACTICES', cardinality=One, model=BaseRel)
+    # traverse the incoming ASKED_IN relationship, inflate the quiz class
+    quizzes = RelationshipFrom("app.models.quiz.Quiz", "ASKED_IN", cardinality=ZeroOrMore, model=BaseRel)
 
     def json(self):
         """

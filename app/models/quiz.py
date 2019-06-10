@@ -1,4 +1,5 @@
-from neomodel import StructuredNode, StringProperty, UniqueIdProperty, RelationshipTo
+from neomodel import StructuredNode, StringProperty, UniqueIdProperty, RelationshipTo, ZeroOrMore
+from app.models.relationships.base_rel import BaseRel
 
 
 class Quiz(StructuredNode):
@@ -8,4 +9,5 @@ class Quiz(StructuredNode):
     uuid = UniqueIdProperty()
     name = StringProperty()
     # traverse the ASKED_IN relations, inflate the room the question is a part of
-    asked_in = RelationshipTo(Room, 'ASKED_IN')
+    asked_in = RelationshipTo("app.models.room.Room",
+                              'ASKED_IN', cardinality=ZeroOrMore, model=BaseRel)
