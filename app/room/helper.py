@@ -55,7 +55,13 @@ def response_single_room(room_id):
     :param room_id: the room to get from the graph
     :returns make_response with json representation of a room
     """
-    return make_response(jsonify(get_room_by_id(room_id)))
+    room = {}
+    try:
+        room = get_room_by_id(room_id)
+    except ValueError:
+        #The room does not exist  - Error
+        return make_response(jsonify(room), 404)
+    return make_response(jsonify(room))
 
 
 def response_all_rooms():
