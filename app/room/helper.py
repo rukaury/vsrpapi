@@ -45,6 +45,27 @@ def check_user_is_room_admin(current_user, room_id):
     return Room.nodes.get_or_none(uuid=room_id).admin.get().username == current_user.username
 
 
+def get_single_room(current_user, room_id):
+    '''
+    Helper to retrieve a room from the graph using a room id
+    :param room_id: the id matching the uuid of the room in the graph
+    :return room: the room matching the room_id
+    '''
+    return current_user.rooms.get_or_none(uuid=room_id)
+
+
+def get_all_rooms(current_user):
+    '''
+    Helper function to return a list of all rooms in the graph
+    :return room_array: an array of all rooms (formatted to json) in the graph, empty if none exist
+    '''
+    rooms = current_user.rooms
+    room_array = []
+    for room in rooms:
+        room_array.append(room.json())
+    return room_array
+
+
 def response_for_single_room(room):
     """
     Return the response for when a single room was requested by the user.
@@ -55,6 +76,7 @@ def response_for_single_room(room):
         'status': 'success',
         'room': room
     }))
+
 
 def response(status, message, code):
     """
@@ -69,6 +91,7 @@ def response(status, message, code):
         'message': message
     })), code
 
+
 def response_for_rooms_list(all_rooms):
     """
     Return the response when all rooms are requested.
@@ -80,6 +103,7 @@ def response_for_rooms_list(all_rooms):
         'rooms': all_rooms
     }))
 
+
 def response_for_created_room(room, status_code):
     """
     Method returning the response when an room has been successfully created.
@@ -87,10 +111,27 @@ def response_for_created_room(room, status_code):
     :param room: room
     :return: Http Response
     """
-    return make_response(jsonify({'room' : {
+    return make_response(jsonify({'room': {
         'room_id': room.uuid,
         'room_name': room.name,
         'room_course': room.course.get().code
     }, 'status': 'success'})), status_code
 
 
+<<<<<<< HEAD
+=======
+def response_for_rooms_quizzes(room, quizzes):
+    quiz_array = []
+    if quizzes:
+        for quiz in quizzes:
+            quiz_array.append(quiz)
+
+    room_with_quizzes = {
+        "name": room.name,
+        "active": room.active,
+        "room_id": room.uuid,
+        "quizzes": quiz_array
+    }
+
+    return make_response(jsonify(room_with_quizzes))
+>>>>>>> 182cfe9f8ffa1922797946e3653b367451f03863

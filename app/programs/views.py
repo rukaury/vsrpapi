@@ -33,7 +33,7 @@ def get_program(program_id):
     try:
         str(program_id)
     except ValueError:
-        return response('failed', 'Please provide a valid Event Id', 400)
+        return response('failed', 'Please provide a valid program Id', 400)
     else:
         program = get_single_program(program_id)
         if program:
