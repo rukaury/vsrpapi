@@ -32,7 +32,6 @@ def get_room_by_id(room_id):
     '''
     room = Room.nodes.get_or_none(uuid=room_id)
     if room is None:
-        return {}
         raise ValueError("Room with id " + room_id + " cannot be found")
     return room.json()
 
