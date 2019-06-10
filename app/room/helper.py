@@ -117,9 +117,6 @@ def response_for_created_room(room, status_code):
         'room_course': room.course.get().code
     }, 'status': 'success'})), status_code
 
-
-<<<<<<< HEAD
-=======
 def response_for_rooms_quizzes(room, quizzes):
     quiz_array = []
     if quizzes:
@@ -134,4 +131,3 @@ def response_for_rooms_quizzes(room, quizzes):
     }
 
     return make_response(jsonify(room_with_quizzes))
->>>>>>> 182cfe9f8ffa1922797946e3653b367451f03863
