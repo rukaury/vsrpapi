@@ -33,5 +33,10 @@ from app.courses.views import courses
 
 app.register_blueprint(courses, url_prefix='/v1')
 
+from app.room.views import room
+
+app.register_blueprint(room, url_prefix='/v1')
+
+
 # Import the application views
 from app import views
