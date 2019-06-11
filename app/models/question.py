@@ -15,7 +15,7 @@ class Question(StructuredNode):
                           "ASKED_IN", cardinality=One, model=BaseRel)
     # traverse the ANSWERED_FOR relationship, inflate the answers to the question
     answers = RelationshipFrom(
-        "app.models.question.Question", "ANSWER_FOR", cardinality=OneOrMore, model=BaseRel)
+        "app.models.answer.Answer", "ANSWER_FOR", cardinality=OneOrMore, model=BaseRel)
 
     def update(self, title, text, rel):
         """
