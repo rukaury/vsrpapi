@@ -3,6 +3,23 @@ from app.models.answer import Answer
 from app.models.question import Question
 from flask import make_response, jsonify
 
+def room_required(f):
+    """
+    Decorator to ensure that a valid room id is sent in the url path parameters
+    :param f:
+    :return:
+    """
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        event_id = request.view_args['room_id']
+        try:
+            str(room_id)
+        except ValueError:
+            return response('failed', 'Provide a valid Room Id', 401)
+        return f(*args, **kwargs)
+
+    return decorated_function
 
 def create_and_save_room(name, active, user, course):
     '''
