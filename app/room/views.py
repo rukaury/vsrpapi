@@ -1,4 +1,5 @@
-from app.room.helper import response, get_course_from_user, create_and_save_room, response_for_created_room, check_user_is_room_admin, get_single_room, get_all_rooms, response_for_rooms_list, response_for_single_room
+from app.room.helper import (response, get_course_from_user, create_and_save_room, response_for_created_room, response_for_created_question,
+                             check_user_is_room_admin, get_single_room, get_all_rooms, response_for_rooms_list, response_for_single_room, get_questions_for_room, create_and_save_question, get_single_question, get_answers_for_question, response_for_single_question_with_answers)
 from flask import Blueprint, request, abort
 from app.auth.helper import token_required
 
@@ -29,6 +30,34 @@ def create_room(current_user):
     return response('failed', 'Content-type must be json', 202)
 
 
+@rooms.route('/rooms/<room_id>/questions', methods=['POST'])
+@token_required
+def create_question(current_user, room_id):
+    """
+    Create an room from the sent json data.
+    :param current_user: Current User
+    :return:
+    """
+    room = get_single_room(current_user, room_id)
+    if not room:
+        return response('failed', 'Room matching ID not found', 400)
+
+    if request.content_type == 'application/json':
+        data = request.get_json().get("question")
+        title = data.get('title') if data.get('title') is not None else None
+        text = data.get('text') if data.get('text') is not None else None
+        is_mcq = data.get('is_mcq') if data.get('is_mcq') is not None else None
+        answers = data.get('answers') if data.get(
+            'answers') is not None else None
+
+        if title and text and is_mcq and answers:
+            user_question = create_and_save_question(
+                title, text, is_mcq, answers, room)
+            return response_for_created_question(user_question, 201)
+        return response('failed', 'Missing some room data, nothing was changed', 400)
+    return response('failed', 'Content-type must be json', 202)
+
+
 @rooms.route('/rooms', methods=['GET'])
 @token_required
 def view_all_rooms(current_user):
@@ -51,11 +80,40 @@ def view_single_room(current_user, room_id):
         return response('failed', 'Please provide a valid room id', 400)
     room = get_single_room(current_user, room_id)
     if not room:
-        return response('failed', "Program not found", 404)
+        return response('failed', "Room not found", 404)
 
-    quizzes = room.quizzes
+    questions = get_questions_for_room(room)
 
-    return response_for_single_room(room, quizzes)
+    return response_for_single_room(room, questions)
+
+
+@rooms.route('/rooms/<room_id>/questions/<question_id>', methods=['GET'])
+@token_required
+def view_question_with_answer(current_user, room_id, question_id):
+    """
+    Get the room from the graph
+    :param room_id: the uuid of the room to get
+    :param current_user: Current User
+    :return: the room matching the id
+    """
+    try:
+        str(question_id)
+    except ValueError:
+        return response('failed', 'Please provide a valid room id', 400)
+
+    room = get_single_room(current_user, room_id)
+
+    if not room:
+        return response('failed', "Room not found", 404)
+
+    question = get_single_question(room, question_id)
+
+    if not question:
+        return response('failed', "Question not found", 404)
+
+    answers = get_answers_for_question(question)
+
+    return response_for_single_question_with_answers(question, answers)
 
 
 @rooms.route('/rooms/<room_id>', methods=['PUT'])

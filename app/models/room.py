@@ -1,6 +1,8 @@
-from neomodel import (StructuredNode, UniqueIdProperty, StringProperty, BooleanProperty, RelationshipTo, RelationshipFrom, One, ZeroOrMore)
+from neomodel import (StructuredNode, UniqueIdProperty, StringProperty,
+                      BooleanProperty, RelationshipTo, RelationshipFrom, One, ZeroOrMore)
 from app.models.relationships.base_rel import BaseRel
 import datetime
+
 
 class Room(StructuredNode):
     """
@@ -11,13 +13,17 @@ class Room(StructuredNode):
     active = BooleanProperty(required=True)
 
     # traverse outgoing PARTICIPANT relationship, inflate Users who are in the room
-    participants = RelationshipFrom("app.models.user.User", 'PARTICIPATES_IN', cardinality=ZeroOrMore, model=BaseRel)
+    participants = RelationshipFrom(
+        "app.models.user.User", 'PARTICIPATES_IN', cardinality=ZeroOrMore, model=BaseRel)
     # traverse outgoing CREATED_BY relationship, inflate User who created/owns the room
-    admin = RelationshipTo("app.models.user.User", 'CREATED_BY', cardinality=One, model=BaseRel)
+    admin = RelationshipTo("app.models.user.User",
+                           'CREATED_BY', cardinality=One, model=BaseRel)
     # traverse the PRACTICES relations, inflate the class it studies
-    course = RelationshipTo("app.models.course.Course", 'PRACTICES', cardinality=One, model=BaseRel)
-    # traverse the incoming ASKED_IN relationship, inflate the quiz class
-    quizzes = RelationshipFrom("app.models.quiz.Quiz", "ASKED_IN", cardinality=ZeroOrMore, model=BaseRel)
+    course = RelationshipTo("app.models.course.Course",
+                            'PRACTICES', cardinality=One, model=BaseRel)
+    # traverse the incoming ASKED_IN relationship, inflate the question class
+    questions = RelationshipFrom(
+        "app.models.question.Question", "ASKED_IN", cardinality=ZeroOrMore, model=BaseRel)
 
     def update(self, name, course, rel):
         """
@@ -26,7 +32,7 @@ class Room(StructuredNode):
         """
 
         self.name = name if name is not None else self.name
-        
+
         if course:
             self.course.reconnect(self.course.get(), course)
         rel.updated_on = datetime.datetime.now()

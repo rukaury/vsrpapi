@@ -9,7 +9,7 @@ class Answer(StructuredNode):
     """
     uuid = UniqueIdProperty()
     text = StringProperty(required=True)
-    correct = BooleanProperty()
+    correct = BooleanProperty(required=True)
     # traverse the ANSWERED_FOR relationship, inflate the question the answer belongs to
     question = RelationshipTo(
         "app.models.question.Question", "ANSWER_FOR", cardinality=One, model=BaseRel)
@@ -33,8 +33,6 @@ class Answer(StructuredNode):
         """
         return {
             "text": self.text,
-            "correct" : self.correct,
-            "question": self.question.get().json(),
+            "correct": self.correct,
             "uuid": self.uuid
         }
-

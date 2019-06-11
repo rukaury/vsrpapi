@@ -1,4 +1,4 @@
-from neomodel import StructuredNode, StringProperty, BooleanProperty, RelationshipTo, OneOrMore, UniqueIdProperty
+from neomodel import StructuredNode, StringProperty, BooleanProperty, RelationshipTo, OneOrMore, UniqueIdProperty, One, RelationshipFrom
 from app.models.relationships.base_rel import BaseRel
 
 
@@ -8,11 +8,11 @@ class Question(StructuredNode):
     """
     uuid = UniqueIdProperty()
     title = StringProperty(required=True)
-    text = StringProperty()
-    is_multiple_choice = BooleanProperty()
-    # traverse the ASKED_BY relationship, inflate the quiz this question belongs to
-    quiz = RelationshipTo("app.models.quiz.Quiz",
-                          "ASKED_BY", cardinality=One, model=BaseRel)
+    text = StringProperty(required=True)
+    is_multiple_choice = BooleanProperty(required=True)
+    # traverse the ASKED_BY relationship, inflate the room this question belongs to
+    room = RelationshipTo("app.models.room.Room",
+                          "ASKED_IN", cardinality=One, model=BaseRel)
     # traverse the ANSWERED_FOR relationship, inflate the answers to the question
     answers = RelationshipFrom(
         "app.models.question.Question", "ANSWER_FOR", cardinality=OneOrMore, model=BaseRel)
@@ -35,9 +35,9 @@ class Question(StructuredNode):
         :return active: flag representing if the room is active (true) or disabled (false)
         :return rid: the uuid of the room
         """
+
         return {
-            "title" : self.title,
-            "text" : self.text,
-            "uuid" : self.uuid,
-            "quiz" : self.quiz.get().json()
+            "title": self.title,
+            "text": self.text,
+            "uuid": self.uuid
         }
