@@ -28,13 +28,15 @@ def get_course_from_user(current_user, course_code):
    '''
     return current_user.school.get().courses.get_or_none(code=course_code)
 
+
 def get_single_room(current_user, room_id):
-   '''
-   Helper to retrieve a room from the graph using a room id
-   :param room_id: the id matching the uuid of the room in the graph
-   :return room: the room matching the room_id
-   '''
-   return current_user.rooms.get_or_none(uuid=room_id)
+    '''
+    Helper to retrieve a room from the graph using a room id
+    :param room_id: the id matching the uuid of the room in the graph
+    :return room: the room matching the room_id
+    '''
+    return current_user.rooms.get_or_none(uuid=room_id)
+
 
 def check_user_is_room_admin(current_user, room_id):
     '''
@@ -64,18 +66,6 @@ def get_all_rooms(current_user):
     for room in rooms:
         room_array.append(room.json())
     return room_array
-
-
-def response_for_single_room(room):
-    """
-    Return the response for when a single room was requested by the user.
-    :param program:
-    :return:
-    """
-    return make_response(jsonify({
-        'status': 'success',
-        'room': room.json()
-    }))
 
 
 def response(status, message, code):
@@ -117,7 +107,8 @@ def response_for_created_room(room, status_code):
         'room_course': room.course.get().code
     }, 'status': 'success'})), status_code
 
-def response_for_rooms_quizzes(room, quizzes):
+
+def response_for_single_room(room, quizzes):
     quiz_array = []
     if quizzes:
         for quiz in quizzes:
