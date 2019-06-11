@@ -1,7 +1,7 @@
 from app.models.room import Room
 from app.models.answer import Answer
 from app.models.question import Question
-from flask import make_response, jsonify
+from flask import make_response, jsonify, request
 from functools import wraps
 
 def room_required(f):
@@ -13,7 +13,7 @@ def room_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        event_id = request.view_args['room_id']
+        room_id = request.view_args['room_id']
         try:
             str(room_id)
         except ValueError:
