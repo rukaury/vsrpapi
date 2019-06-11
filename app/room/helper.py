@@ -2,6 +2,7 @@ from app.models.room import Room
 from app.models.answer import Answer
 from app.models.question import Question
 from flask import make_response, jsonify
+from functools import wraps
 
 def room_required(f):
     """
