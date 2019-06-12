@@ -2,6 +2,7 @@ from app import bcrypt
 from flask import Blueprint, request
 from flask.views import MethodView
 from app.auth.helper import response, response_auth, token_required
+from app.schools.helper import get_single_school
 from app.models.user import User
 from app.models.blacklist_token import BlackListToken
 import re
@@ -24,10 +25,15 @@ class RegisterUser(MethodView):
             l_name = post_data.get('last_name')
             username = post_data.get('username')
             password = post_data.get('password')
-            if len(password) > 4:
+            school_id = post_data.get('school_id')
+            if len(password) > 4 and f_name and l_name and username and school_id:
+                school = get_single_school(school_id)
+                if not school:
+                    return response('failed', 'School with id ' + school_id + ' does not exist', 401)
                 user = User.get_by_username(username)
                 if not user:
-                    token = User(username=username, password=password, f_name=f_name, l_name=l_name).save_user()
+                    user = User(username=username, password=password, f_name=f_name, l_name=l_name)
+                    token = user.save_user(school)
                     return response_auth('success', 'Successfully registered', token, 201)
                 else:
                     return response('failed', 'Failed, User already exists, Please sign In', 400)

@@ -24,7 +24,7 @@ class User(StructuredNode):
     # traverse outgoing PARTICIPATES_IN relationship, inflate room that user participates to
     rooms = RelationshipTo('app.models.room.Room', 'PARTICIPATES_IN', cardinality=ZeroOrMore, model=BaseRel)
 
-    def save_user(self):
+    def save_user(self, school):
         """
         Persist the user in the database
         :param user:
@@ -33,6 +33,7 @@ class User(StructuredNode):
         self.password = bcrypt.generate_password_hash(self.password, app.config.get('BCRYPT_LOG_ROUNDS')) \
             .decode('utf-8')
         self.save()
+        self.school.connect(school)
         return self.encode_auth_token(self.username)
 
     def encode_auth_token(self, username):
