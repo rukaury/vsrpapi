@@ -39,5 +39,6 @@ class Question(StructuredNode):
         return {
             "title": self.title,
             "text": self.text,
-            "uuid": self.uuid
+            "uuid": self.uuid,
+            "is_mcq" : self.is_multiple_choice
         }
