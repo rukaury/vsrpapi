@@ -43,7 +43,6 @@ class ProductionConfig(BaseConfig):
     Production application configuration
     """
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', postgres_local_base + database_name)
     BCRYPT_HASH_PREFIX = 13
     AUTH_TOKEN_EXPIRY_DAYS = 30
     AUTH_TOKEN_EXPIRY_SECONDS = 20
