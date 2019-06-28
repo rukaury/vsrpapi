@@ -29,6 +29,18 @@ def create_room(current_user):
         return response('failed', 'Missing some room data, nothing was changed', 400)
     return response('failed', 'Content-type must be json', 202)
 
+@rooms.route('/rooms/<room_id>/invite/<user_id>', methods=['POST'])
+@token_required
+def create_room_invite(current_user, room_id, user_id):
+    """
+    Create a room invite for a user.
+    :param current_user: Current User
+    :param room_id: Room id
+    :param user_id: User invite
+    :return:
+    """
+    pass
+
 
 @rooms.route('/rooms/<room_id>/questions', methods=['POST'])
 @token_required
