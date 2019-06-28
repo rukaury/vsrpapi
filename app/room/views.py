@@ -51,7 +51,7 @@ def create_question(current_user, room_id):
         answers = data.get('answers') if data.get(
             'answers') is not None else None
 
-        if title and text and is_mcq:
+        if title and text:
             user_question = create_and_save_question(
                 title, text, is_mcq, answers, room)
             return response_for_created_question(user_question, 201)
