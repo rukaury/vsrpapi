@@ -1,4 +1,5 @@
 from app.models.room import Room
+from app.models.user import User
 from app.models.answer import Answer
 from app.models.question import Question
 from flask import make_response, jsonify, request
@@ -60,6 +61,22 @@ def create_and_save_question(title, text, is_mcq, answers, room):
         temp_answ.question.connect(new_question)
 
     return new_question
+
+def add_users_to_room(current_user, users, room):
+    '''
+    Helper to add a user to a room
+    :param username: the user username
+    :param room: Room
+    :return ValueError: raised if either the room or user cannot be found in the graph
+    '''
+    
+    for u in users:
+        user = User.nodes.get_or_none(username=u)
+        if user:
+            user.rooms.connect(room)
+    
+    return users
+
 
 
 def get_course_from_user(current_user, course_code):
@@ -172,6 +189,17 @@ def response_for_rooms_list(all_rooms):
         'status': 'success',
         'rooms': all_rooms
     }))
+
+def response_for_added_users(all_users, status_code):
+    """
+    Return the response when all users are added.
+    :param all_users:
+    :return:
+    """
+    return make_response(jsonify({
+        'status': 'success',
+        'users': all_users
+    })), status_code
 
 
 def response_for_created_room(room, status_code):
