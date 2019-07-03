@@ -41,6 +41,10 @@ from app.room.views import rooms
 
 app.register_blueprint(rooms, url_prefix='/v1')
 
+from app.user.views import users
+
+app.register_blueprint(users, url_prefix='/v1')
+
 
 # Import the application views
 from app import views

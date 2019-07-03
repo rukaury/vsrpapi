@@ -53,8 +53,7 @@ def create_and_save_question(title, text, is_mcq, answers, room):
     new_question.save()
 
     new_question.room.connect(room)
-
-    # def process_answers()
+    
     for a in answers:
         temp_answ = Answer(text=a.get('text'), correct=a.get('correct'))
         temp_answ.save()
@@ -191,12 +190,12 @@ def response_for_created_room(room, status_code):
 
 def response_for_created_question(question, status_code):
     """
-    Method returning the response when an room has been successfully created.
+    Method returning the response when a question has been successfully created.
     :param status_code:
     :param room: room
     :return: Http Response
     """
-    return make_response(jsonify({'room': {
+    return make_response(jsonify({'question': {
         'uuid': question.uuid,
         'title': question.title,
         'text': question.text,
