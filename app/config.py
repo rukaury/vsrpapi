@@ -13,6 +13,7 @@ class BaseConfig:
     AUTH_TOKEN_EXPIRY_DAYS = 30
     AUTH_TOKEN_EXPIRY_SECONDS = 3600
     ITEMS_PER_PAGE = 4
+    neoconfig.DATABASE_URL = os.environ["NEO4J_BOLT_URL"]
 
 
 class DevelopmentConfig(BaseConfig):
@@ -24,7 +25,6 @@ class DevelopmentConfig(BaseConfig):
     AUTH_TOKEN_EXPIRY_DAYS = 1
     AUTH_TOKEN_EXPIRY_SECONDS = 20
     ITEMS_PER_PAGE = 4
-    neoconfig.DATABASE_URL = os.environ["NEO4J_BOLT_URL"]
 
 class TestingConfig(BaseConfig):
     """
