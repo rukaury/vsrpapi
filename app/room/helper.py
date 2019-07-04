@@ -72,7 +72,7 @@ def add_users_to_room(current_user, users, room):
     
     for u in users:
         user = User.nodes.get_or_none(username=u)
-        if user:
+        if user and not room.participants.get_or_none(username=u):
             user.rooms.connect(room)
     
     return users
