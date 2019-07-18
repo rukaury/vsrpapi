@@ -1,5 +1,5 @@
 from neomodel import (StructuredNode, StringProperty,
-                      BooleanProperty, RelationshipTo, One, UniqueIdProperty)
+                      BooleanProperty, RelationshipTo, One, UniqueIdProperty, ZeroOrMore)
 from app.models.relationships.base_rel import BaseRel
 
 
@@ -13,6 +13,8 @@ class Answer(StructuredNode):
     # traverse the ANSWERED_FOR relationship, inflate the question the answer belongs to
     question = RelationshipTo(
         "app.models.question.Question", "ANSWER_FOR", cardinality=One, model=BaseRel)
+    users = RelationshipTo(
+        "app.models.user.User", "ANSWERED_BY", cardinality=ZeroOrMore, model=BaseRel)
 
     def update(self, text, rel):
         """

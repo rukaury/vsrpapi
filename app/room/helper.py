@@ -23,6 +23,24 @@ def room_required(f):
 
     return decorated_function
 
+def question_required(f):
+    """
+    Decorator to ensure that a valid question id is sent in the url path parameters
+    :param f:
+    :return:
+    """
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        question_id = request.view_args['question_id']
+        try:
+            str(question_id)
+        except ValueError:
+            return response('failed', 'Provide a valid question Id', 401)
+        return f(*args, **kwargs)
+
+    return decorated_function
+
 def create_and_save_room(name, active, user, course):
     '''
     Helper to create a room and save it to the graph
@@ -62,12 +80,12 @@ def create_and_save_question(title, text, is_mcq, answers, room):
 
     return new_question
 
-def add_users_to_room(current_user, users, room):
+def add_users_to_room(users, room):
     '''
     Helper to add a user to a room
-    :param username: the user username
+    :param users: list of users 
     :param room: Room
-    :return ValueError: raised if either the room or user cannot be found in the graph
+    :return users
     '''
     
     for u in users:
@@ -76,6 +94,24 @@ def add_users_to_room(current_user, users, room):
             user.rooms.connect(room)
     
     return users
+
+
+def add_answer_to_user(current_user, answer_id):
+    '''
+    Helper to add an answer to a user
+    :param current_user: the user 
+    :param answer_id: answer id
+    :return answer
+    '''
+
+    answer = Answer.nodes.get_or_none(uuid=answer_id)
+
+    if answer:
+        answer.users.connect(current_user)
+
+    return answer
+
+    
 
 
 
@@ -228,6 +264,21 @@ def response_for_created_question(question, status_code):
         'title': question.title,
         'text': question.text,
         'is_mcq': question.is_multiple_choice
+    }, 'status': 'success'})), status_code
+
+
+def response_for_associated_answer(answer, status_code):
+    """
+    Method returning the response when an answer has been successfully associated to a user.
+    :param status_code:
+    :param answer: answer
+    :return: Http Response
+    """
+    return make_response(jsonify({'answer': {
+        'uuid': answer.uuid,
+        'text': answer.text,
+        'correct': answer.correct,
+        'question_id': answer.question.get().uuid
     }, 'status': 'success'})), status_code
 
 

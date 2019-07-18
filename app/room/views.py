@@ -1,5 +1,5 @@
 from app.room.helper import (response, get_course_from_user, create_and_save_room, response_for_created_room, response_for_created_question,
-                             check_user_is_room_admin, get_single_room, get_all_rooms, response_for_rooms_list, response_for_single_room, get_questions_for_room, create_and_save_question, get_single_question, get_answers_for_question, response_for_single_question_with_answers, room_required, add_users_to_room, response_for_added_users)
+                             check_user_is_room_admin, get_single_room, get_all_rooms, response_for_rooms_list, response_for_single_room, get_questions_for_room, create_and_save_question, get_single_question, get_answers_for_question, response_for_single_question_with_answers, room_required, add_users_to_room, response_for_added_users, question_required, add_answer_to_user, response_for_associated_answer)
 from flask import Blueprint, request, abort
 from app.auth.helper import token_required
 
@@ -58,6 +58,32 @@ def create_question(current_user, room_id):
         return response('failed', 'Missing some room data, nothing was changed', 400)
     return response('failed', 'Content-type must be json', 202)
 
+
+@rooms.route('/rooms/<room_id>/questions/<question_id>/answers/<answer_id>', methods=['POST'])
+@token_required
+@room_required
+@question_required
+def associate_answer_to_user(current_user, room_id, question_id, answer_id):
+    """
+    Asscoiate an answer with a user from the sent json data.
+    :param current_user: Current User
+    :param answer_id: answer id
+    :return:
+    """
+    room = get_single_room(current_user, room_id)
+    if not room:
+        return response('failed', 'Room matching ID not found', 400)
+
+    question = get_single_question(room, question_id)
+    if not question:
+        return response('failed', 'Question matching ID not found', 400)
+
+    user_answer = add_answer_to_user(current_user, answer_id)
+    if not user_answer:
+        return response('failed', 'Answer matching ID not found', 400)
+
+    return response_for_associated_answer(user_answer, 201)
+
 @rooms.route('/rooms/<room_id>/invite', methods=['POST'])
 @token_required
 @room_required
@@ -80,7 +106,7 @@ def add_users(current_user, room_id):
         users = request.get_json().get("users")
 
         if users:
-            added_users = add_users_to_room(current_user, users, room)
+            added_users = add_users_to_room(users, room)
             return response_for_added_users(added_users, 201)
         return response('failed', 'Missing some users data, nothing was changed', 400)
     return response('failed', 'Content-type must be json', 202)
