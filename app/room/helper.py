@@ -106,7 +106,7 @@ def add_answer_to_user(current_user, answer_id):
 
     answer = Answer.nodes.get_or_none(uuid=answer_id)
 
-    if answer:
+    if answer and not answer.users.is_connected(current_user):
         answer.users.connect(current_user)
 
     return answer
