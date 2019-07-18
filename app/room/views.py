@@ -166,7 +166,7 @@ def view_question_with_answer(current_user, room_id, question_id):
     if not question:
         return response('failed', "Question not found", 404)
 
-    answers = get_answers_for_question(question)
+    answers = get_answers_for_question(current_user, question)
 
     return response_for_single_question_with_answers(question, answers)
 

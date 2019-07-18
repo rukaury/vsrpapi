@@ -187,7 +187,7 @@ def get_questions_for_room(room):
     return questions_array
 
 
-def get_answers_for_question(question):
+def get_answers_for_question(current_user, question):
     """
     Get the answers for a given question
     :param question: neomodel room with answers 
@@ -197,7 +197,11 @@ def get_answers_for_question(question):
     answers = question.answers
 
     for a in answers:
-        answers_array.append(a.json())
+        answer = a.json()
+        if(a.users.is_connected(current_user)):
+            answer['answered'] = True
+        answers_array.append(answer)
+        
     return answers_array
 
 
